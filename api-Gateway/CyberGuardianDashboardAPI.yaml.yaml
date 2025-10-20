@@ -1,0 +1,22 @@
+openapi: "3.0.1"
+info:
+  title: "CyberGuardianDashboard"
+  version: "2025-10-19 13:39:46UTC"
+servers:
+- url: "https://nvyk9mz6q8.execute-api.us-east-1.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: "dev"
+paths:
+  /logs:
+    get:
+      responses:
+        default:
+          description: "Default response for GET /logs"
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: "aws_proxy"
+        httpMethod: "POST"
+        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:440946411092:function:CyberGuardianDashboardReader/invocations"
+        connectionType: "INTERNET"
+x-amazon-apigateway-importexport-version: "1.0"

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberGuardian Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f0f2f5;
+      --text-color: #333;
+      --header-bg: #1f2937;
+      --header-text: #fff;
+      --table-bg: #fff;
+      --table-hover: #f1f5f9;
+      --badge-low: #d1fae5;
+      --badge-medium: #fef3c7;
+      --badge-high: #fee2e2;
+    }
+
+    body.dark {
+      --bg-color: #1a1c1f;
+      --text-color: #e5e7eb;
+      --header-bg: #111827;
+      --header-text: #f9fafb;
+      --table-bg: #2c2f33;
+      --table-hover: #374151;
+      --badge-low: #065f46;
+      --badge-medium: #92400e;
+      --badge-high: #991b1b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    header {
+      background-color: var(--header-bg);
+      color: var(--header-text);
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .container {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .toggle {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .toggle button {
+      padding: 8px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #4b5563;
+      color: white;
+    }
+
+    .loading {
+      font-style: italic;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: var(--table-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f9fafb;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background-color: var(--table-hover);
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .low { background-color: var(--badge-low); color: white; }
+    .medium { background-color: var(--badge-medium); color: black; }
+    .high { background-color: var(--badge-high); color: black; }
+
+    .verdict-safe { color: #10b981; font-weight: bold; }
+    .verdict-warning { color: #b91c1c; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🛡️ CyberGuardian Dashboard</h1>
+    <p>Real-time phishing detection logs</p>
+  </header>
+
+  <div class="container">
+    <div class="toggle">
+      <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+    </div>
+
+    <p class="loading">⏳ Loading data from the agent...</p>
+    <table id="logTable" style="display: none;">
+      <thead>
+        <tr>
+          <th>Message</th>
+          <th>Verdict</th>
+          <th>Severity</th>
+          <th>Source</th>
+          <th>Recommendation</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const apiUrl = "https://nvyk9mz6q8.execute-api.us-east-1.amazonaws.com/dev/logs";
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
+
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then(data => {
+        const table = document.getElementById("logTable");
+        const tbody = table.querySelector("tbody");
+        const loadingText = document.querySelector(".loading");
+
+        if (!Array.isArray(data) || data.length === 0) {
+          loadingText.textContent = "No logs found.";
+          return;
+        }
+
+        data.forEach(item => {
+          const row = document.createElement("tr");
+
+          const severityClass = item.severity === "high" ? "high" :
+                                item.severity === "medium" ? "medium" : "low";
+
+          const verdictClass = item.analysis.includes("safe") ? "verdict-safe" : "verdict-warning";
+
+          row.innerHTML = `
+            <td>${item.message || ""}</td>
+            <td class="${verdictClass}">${item.analysis || ""}</td>
+            <td><span class="badge ${severityClass}">${item.severity || ""}</span></td>
+            <td>${item.source || ""}</td>
+            <td>${item.recommendation || ""}</td>
+            <td>${item.timestamp || ""}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        loadingText.style.display = "none";
+        table.style.display = "table";
+      })
+      .catch(error => {
+        document.querySelector(".loading").textContent = "❌ Failed to load data: " + error.message;
+        console.error("Error fetching data:", error);
+      });
+  </script>
+</body>
+</html>

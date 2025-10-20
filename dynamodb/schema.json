@@ -1,0 +1,23 @@
+{
+  "TableName": "CyberGuardianLogs",
+  "KeySchema": [
+    {
+      "AttributeName": "id",
+      "KeyType": "HASH"
+    }
+  ],
+  "AttributeDefinitions": [
+    { "AttributeName": "id", "AttributeType": "S" },
+    { "AttributeName": "agent_decision", "AttributeType": "S" },
+    { "AttributeName": "analysis", "AttributeType": "S" },
+    { "AttributeName": "message", "AttributeType": "S" },
+    { "AttributeName": "recommendation", "AttributeType": "S" },
+    { "AttributeName": "severity", "AttributeType": "S" },
+    { "AttributeName": "source", "AttributeType": "S" },
+    { "AttributeName": "timestamp", "AttributeType": "S" }
+  ],
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 5,
+    "WriteCapacityUnits": 5
+  }
+}
