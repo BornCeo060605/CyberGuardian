@@ -89,6 +89,13 @@ CyberGuardian/ ├── api-Gateway/ │   ├── CyberGuardianAPI.yaml │ 
 
 ---
 
+## 🌐 Live Dashboard
+
+Access the deployed CyberGuardian dashboard here:  
+🔗 [http://cyberguardian-dashboard.s3-website-us-east-1.amazonaws.com](http://cyberguardian-dashboard.s3-website-us-east-1.amazonaws.com)
+
+---
+
 ## 📜 License
 
 This project is licensed under the MIT License. See `LICENSE` for details.
